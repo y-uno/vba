@@ -52,6 +52,8 @@ Sub GetCellAddress()
         For i = 1 To lastRow
             If ws.Cells(i, 1).Value = selectedName Then
                 cellAddress = ws.Cells(i, 1).Address
+                ' 変数 x にセル位置（行）を格納
+                x = cellAddress.Row
                 Exit For
             End If
         Next i
@@ -59,7 +61,5 @@ Sub GetCellAddress()
         ' 結果をメッセージボックスで表示
         MsgBox "選択した名前: " & selectedName & vbNewLine & "セル位置: " & cellAddress
 
-        ' 変数 x にセル位置を格納
-        x = cellAddress
     End If
 End Sub

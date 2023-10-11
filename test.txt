@@ -1,0 +1,65 @@
+Dim comboBox As OLEObject ' コンボボックスのオブジェクトをグローバル変数として宣言
+Dim x As String ' xの値を格納するグローバル変数
+
+Sub CreateComboBoxAndGetValue()
+    Dim ws As Worksheet
+    Dim lastRow As Long
+    Dim i As Long
+
+    ' ワークシートを設定（適切なワークシート名に変更してください）
+    Set ws = ThisWorkbook.Sheets("Sheet1")
+
+    ' コンボボックスの配置場所を設定（適切な位置に変更してください）
+    Set comboBox = ws.OLEObjects.Add(ClassType:="Forms.ComboBox.1", Link:=False, _
+        DisplayAsIcon:=False, Left:=100, Top:=50, Width:=100, Height:=20)
+    
+    ' 最終行を取得
+    lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+    
+    ' 各行から名前を取得してコンボボックスのアイテムとして追加
+    For i = 1 To lastRow
+        comboBox.Object.AddItem ws.Cells(i, 1).Value
+    Next i
+
+    ' コンボボックスのChangeイベントを設定
+    With comboBox
+        .Name = "ComboBox1" ' コンボボックスの名前を設定
+        .ListFillRange = "" ' リストの範囲をクリア
+        .LinkedCell = "" ' リンクセルをクリア
+    End With
+
+    ' コンボボックスを表示
+    comboBox.Object.ListIndex = 0 ' 初期選択を設定（適切な値に変更してください）
+    comboBox.Activate
+End Sub
+
+Sub GetCellAddress()
+    Dim ws As Worksheet
+    Dim selectedName As String
+    Dim cellAddress As String
+
+    ' ワークシートを設定（適切なワークシート名に変更してください）
+    Set ws = ThisWorkbook.Sheets("Sheet1")
+
+    ' 選択された名前を取得
+    selectedName = comboBox.Object.Value ' コンボボックスのオブジェクトを参照
+
+    If selectedName <> "" Then ' 名前が選択された場合のみ処理を実行
+        ' 名前を検索してセル位置を取得
+        cellAddress = ""
+        Dim lastRow As Long
+        lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+        For i = 1 To lastRow
+            If ws.Cells(i, 1).Value = selectedName Then
+                cellAddress = ws.Cells(i, 1).Address
+                Exit For
+            End If
+        Next i
+
+        ' 結果をメッセージボックスで表示
+        MsgBox "選択した名前: " & selectedName & vbNewLine & "セル位置: " & cellAddress
+
+        ' 変数 x にセル位置を格納
+        x = cellAddress
+    End If
+End Sub

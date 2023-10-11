@@ -4,7 +4,24 @@ Dim UserFormShown As Boolean ' ユーザーフォームが表示されたかを�
 
 Sub CreateComboBoxAndGetValue()
     ' 以前のコードと同じ内容
-    ' ...
+    Dim ws As Worksheet
+    Dim lastRow As Long
+    Dim i As Long
+
+    ' ワークシートを設定（適切なワークシート名に変更してください）
+    Set ws = ThisWorkbook.Sheets("Sheet1")
+
+    ' コンボボックスの配置場所を設定（適切な位置に変更してください）
+    Set comboBox = ws.OLEObjects.Add(ClassType:="Forms.ComboBox.1", Link:=False, _
+        DisplayAsIcon:=False, Left:=100, Top:=50, Width:=100, Height:=20)
+    
+    ' 最終行を取得
+    lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+    
+    ' 各行から名前を取得してコンボボックスのアイテムとして追加
+    For i = 1 To lastRow
+        comboBox.Object.AddItem ws.Cells(i, 1).Value
+    Next i
 
     ' コンボボックスのChangeイベントを設定
     With comboBox

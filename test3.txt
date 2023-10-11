@@ -1,0 +1,23 @@
+Private ButtonClicked As Boolean ' クリックフラグをグローバル変数として宣言
+
+Private Sub OKButton_Click()
+    ButtonClicked = True ' OKボタンがクリックされたことを示すフラグを設定
+
+    Dim selectedName As String
+    
+    ' コンボボックスから選択された名前を取得
+    selectedName = ComboBox1.Value
+    
+    If selectedName <> "" Then
+        ' 名前に基づいた追加の処理を実行
+        MsgBox "選択した名前: " & selectedName
+        
+        ' ここで選択された名前に対する処理を記述
+        ' 例: 特定のセルに値を書き込む、他の操作を行うなど
+    Else
+        MsgBox "名前を選択してください"
+    End If
+    
+    ' ユーザーフォームを非表示にする
+    Unload Me
+End Sub

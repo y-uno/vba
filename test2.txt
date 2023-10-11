@@ -1,0 +1,55 @@
+Dim comboBox As OLEObject ' コンボボックスのオブジェクトをグローバル変数として宣言
+Dim x As String ' xの値を格納するグローバル変数
+Dim UserFormShown As Boolean ' ユーザーフォームが表示されたかを示すフラグ
+
+Sub CreateComboBoxAndGetValue()
+    ' 以前のコードと同じ内容
+    ' ...
+
+    ' コンボボックスのChangeイベントを設定
+    With comboBox
+        .Name = "ComboBox1" ' コンボボックスの名前を設定
+        .ListFillRange = "" ' リストの範囲をクリア
+        .LinkedCell = "" ' リンクセルをクリア
+    End With
+
+    ' コンボボックスを表示
+    comboBox.Object.ListIndex = 0 ' 初期選択を設定（適切な値に変更してください）
+    comboBox.Activate
+End Sub
+
+Sub GetCellAddress()
+    ' 以前のコードと同じ内容
+    ' ...
+
+    ' ユーザーフォームを表示（初回のみ表示）
+    If Not UserFormShown Then
+        ShowUserForm
+        UserFormShown = True
+    End If
+End Sub
+
+' ユーザーフォームを表示
+Sub ShowUserForm()
+    UserForm1.Show
+End Sub
+
+' ユーザーフォームから呼び出される処理（OKボタンがクリックされた際に実行）
+Sub ProcessUserForm()
+    Dim selectedName As String
+
+    ' 選択された名前を取得
+    selectedName = UserForm1.ComboBox1.Value
+
+    If selectedName <> "" Then
+        ' 名前が選択された場合の処理
+        MsgBox "選択した名前: " & selectedName
+
+        ' ここで選択された名前に基づいた追加の処理を実行できます
+    Else
+        MsgBox "名前を選択してください"
+    End If
+
+    ' フォームを非表示にする
+    Unload UserForm1
+End Sub

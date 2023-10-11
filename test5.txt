@@ -1,0 +1,17 @@
+Private Sub CommandButton1_Click()
+    Dim selectedName As String
+    
+    ' コンボボックスで選択された名前を取得
+    selectedName = ComboBox1.Value
+    
+    ' 名前が選択されていない場合
+    If selectedName = "" Then
+        ' メッセージを表示
+        MsgBox "名前が選択されていません。"
+    Else
+        ' 名前が選択された場合、名前と"Hello"を表示
+        MsgBox selectedName & " Hello"
+        ' ユーザーフォームを閉じる
+        Unload Me
+    End If
+End Sub

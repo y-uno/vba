@@ -22,3 +22,26 @@ Sub ClearValues()
     ' A1:G10 の 70 セルをクリア
     ws.Range("A1:G10").ClearContents
 End Sub
+
+Sub CopyValuesToSheet2()
+    Dim ws1 As Worksheet
+    Dim ws2 As Worksheet
+    Dim x As Long ' 行番号
+    Dim i As Long ' ループ変数
+    
+    ' シート名を適切なものに変更
+    Set ws1 = ThisWorkbook.Sheets("Sheet1")
+    Set ws2 = ThisWorkbook.Sheets("Sheet2")
+    
+    ' x に行番号を設定（適切な行番号を指定）
+    x = 5
+    
+    ' i に行番号を設定（適切な行番号を指定）
+    i = 1
+    
+    ' (x,5) の値を (i,8) にコピー
+    ws2.Cells(i, 8).Value = ws1.Cells(x, 5).Value
+    
+    ' (x,8) の値を (i,9) にコピー
+    ws2.Cells(i, 9).Value = ws1.Cells(x, 8).Value
+End Sub

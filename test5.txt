@@ -14,3 +14,11 @@ Sub CombineCellsWithSpace()
         ws.Cells(i, 1).Value = ws.Cells(i, 1).Value & " [" & ws.Cells(i, 6).Value & "] [" & ws.Cells(i, 7).Value & "]"
     Next i
 End Sub
+
+Sub ClearValues()
+    Dim ws As Worksheet
+    Set ws = ThisWorkbook.Sheets("Sheet1") ' シート名を適切なものに変更
+
+    ' A1:G10 の 70 セルをクリア
+    ws.Range("A1:G10").ClearContents
+End Sub

@@ -1,39 +1,34 @@
-Sub CreateComboBoxAndForm()
-    ' 新しいユーザーフォームを作成
-    Dim frm As Object
-    Set frm = ThisWorkbook.VBProject.VBComponents.Add(3)
-    frm.Name = "UserForm1"
+Sub UnmergeAndDistribute()
+    Dim ws As Worksheet
+    Dim mergedRange As Range
+    Dim cell As Range
+    Dim originalRow As Long
+    Dim originalColumn As Long
+    Dim totalColumns As Integer
     
-    ' コンボボックスをユーザーフォームに追加
-    With frm.Designer.Controls.Add("Forms.ComboBox.1", , True)
-        .Name = "ComboBox1"
-        .Left = 10
-        .Top = 10
-        .Width = 100
-        .Height = 20
-    End With
+    ' 対象のワークシートを指定（適切なワークシート名に変更してください）
+    Set ws = ThisWorkbook.Sheets("Sheet1")
     
-    ' OKボタンをユーザーフォームに追加
-    With frm.Designer.Controls.Add("Forms.CommandButton.1", , True)
-        .Name = "CommandButton1"
-        .Caption = "OK"
-        .Left = 10
-        .Top = 40
-    End With
+    ' 処理対象の列数を指定（ここでは135列までの例です）
+    totalColumns = 135
     
-    ' ユーザーフォームを表示
-    UserForm1.Show
-End Sub
-
-Private Sub CommandButton1_Click()
-    Dim selectedName As String
-    
-    ' コンボボックスで選択された名前を取得
-    selectedName = ComboBox1.Value
-    
-    ' 選択された名前と"Hello"をメッセージボックスに表示
-    MsgBox selectedName & " Hello"
-    
-    ' ユーザーフォームを非表示
-    UserForm1.Hide
+    ' 各列に対して結合を解除し、分割したセルに元々格納されていた文字を設定
+    For originalColumn = 1 To totalColumns Step 5
+        ' 結合されたセルを選択
+        Set mergedRange = ws.Cells(1, originalColumn).Resize(1, 5)
+        
+        For Each cell In mergedRange
+            If cell.MergeCells Then
+                Dim cellValue As String
+                cellValue = cell.MergeArea.Cells(1, 1).Value ' 結合時の値を取得
+                originalRow = cell.Row
+                cell.UnMerge ' 結合を解除
+                
+                ' 分割したセルに元々格納されていた文字を設定
+                For originalColumn = 1 To 5
+                    ws.Cells(originalRow, originalColumn).Value = cellValue
+                Next originalColumn
+            End If
+        Next cell
+    Next originalColumn
 End Sub

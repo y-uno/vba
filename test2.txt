@@ -1,72 +1,44 @@
-Dim comboBox As OLEObject ' コンボボックスのオブジェクトをグローバル変数として宣言
-Dim x As String ' xの値を格納するグローバル変数
-Dim UserFormShown As Boolean ' ユーザーフォームが表示されたかを示すフラグ
-
-Sub CreateComboBoxAndGetValue()
-    ' 以前のコードと同じ内容
-    Dim ws As Worksheet
-    Dim lastRow As Long
-    Dim i As Long
-
-    ' ワークシートを設定（適切なワークシート名に変更してください）
-    Set ws = ThisWorkbook.Sheets("Sheet1")
-
-    ' コンボボックスの配置場所を設定（適切な位置に変更してください）
-    Set comboBox = ws.OLEObjects.Add(ClassType:="Forms.ComboBox.1", Link:=False, _
-        DisplayAsIcon:=False, Left:=100, Top:=50, Width:=100, Height:=20)
+Sub SearchAndDisplayWithNumeric()
+    Dim ws1 As Worksheet
+    Dim ws2 As Worksheet
+    Dim lastRow1 As Long
+    Dim r As Range
+    Dim w As String
+    Dim numericW As String
     
-    ' 最終行を取得
-    lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+    ' シート1とシート2を設定
+    Set ws1 = ThisWorkbook.Sheets("Sheet1")
+    Set ws2 = ThisWorkbook.Sheets("Sheet2")
     
-    ' 各行から名前を取得してコンボボックスのアイテムとして追加
-    For i = 1 To lastRow
-        comboBox.Object.AddItem ws.Cells(i, 1).Value
-    Next i
-
-    ' コンボボックスのChangeイベントを設定
-    With comboBox
-        .Name = "ComboBox1" ' コンボボックスの名前を設定
-        .ListFillRange = "" ' リストの範囲をクリア
-        .LinkedCell = "" ' リンクセルをクリア
-    End With
-
-    ' コンボボックスを表示
-    comboBox.Object.ListIndex = 0 ' 初期選択を設定（適切な値に変更してください）
-    comboBox.Activate
-End Sub
-
-Sub GetCellAddress()
-    ' 以前のコードと同じ内容
-    ' ...
-
-    ' ユーザーフォームを表示（初回のみ表示）
-    If Not UserFormShown Then
-        ShowUserForm
-        UserFormShown = True
-    End If
-End Sub
-
-' ユーザーフォームを表示
-Sub ShowUserForm()
-    UserForm1.Show
-End Sub
-
-' ユーザーフォームから呼び出される処理（OKボタンがクリックされた際に実行）
-Sub ProcessUserForm()
-    Dim selectedName As String
-
-    ' 選択された名前を取得
-    selectedName = UserForm1.ComboBox1.Value
-
-    If selectedName <> "" Then
-        ' 名前が選択された場合の処理
-        MsgBox "選択した名前: " & selectedName
-
-        ' ここで選択された名前に基づいた追加の処理を実行できます
+    ' 検索対象となる文字列（変数w）を設定
+    w = "153★特別" ' ここを適切な文字列に変更
+    
+    ' w から数字のみを抽出
+    numericW = ExtractNumeric(w)
+    
+    ' シート1のB列の最終行を取得
+    lastRow1 = ws1.Cells(ws1.Rows.Count, "B").End(xlUp).Row
+    
+    ' シート1のB列の3行目から最終行までを対象に検索
+    Set r = ws1.Range("B3:B" & lastRow1).Find(What:=numericW, LookIn:=xlValues, LookAt:=xlPart)
+    
+    If Not r Is Nothing Then
+        ' 部分一致セルが見つかった場合
+        MsgBox "部分一致セルが見つかりました。行番号: " & r.Row
     Else
-        MsgBox "名前を選択してください"
+        ' 部分一致セルが見つからなかった場合
+        MsgBox "部分一致セルが見つかりませんでした。"
     End If
-
-    ' フォームを非表示にする
-    Unload UserForm1
 End Sub
+
+Function ExtractNumeric(s As String) As String
+    Dim i As Integer
+    Dim result As String
+    result = ""
+    For i = 1 To Len(s)
+        If IsNumeric(Mid(s, i, 1)) Then
+            result = result & Mid(s, i, 1)
+        End If
+    Next i
+    ExtractNumeric = result
+End Function

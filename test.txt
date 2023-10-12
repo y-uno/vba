@@ -1,71 +1,32 @@
-Dim comboBox As OLEObject ' コンボボックスのオブジェクトをグローバル変数として宣言
-Dim x As String ' xの値を格納するグローバル変数
-
-Sub CreateComboBoxAndGetValue()
-    Dim ws As Worksheet
-    Dim lastRow As Long
-    Dim i As Long
-
-    ' ワークシートを設定（適切なワークシート名に変更してください）
-    Set ws = ThisWorkbook.Sheets("Sheet1")
-
-    ' コンボボックスの配置場所を設定（適切な位置に変更してください）
-    Set comboBox = ws.OLEObjects.Add(ClassType:="Forms.ComboBox.1", Link:=False, _
-        DisplayAsIcon:=False, Left:=100, Top:=50, Width:=100, Height:=20)
+Sub SearchAndDisplay()
+    Dim ws1 As Worksheet
+    Dim ws2 As Worksheet
+    Dim lastRow1 As Long
+    Dim r As Range
+    Dim w As String
     
-    ' 最終行を取得
-    lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+    ' シート1とシート2を設定
+    Set ws1 = ThisWorkbook.Sheets("Sheet1")
+    Set ws2 = ThisWorkbook.Sheets("Sheet2")
     
-    ' 各行から名前を取得してコンボボックスのアイテムとして追加
-    For i = 1 To lastRow
-        comboBox.Object.AddItem ws.Cells(i, 1).Value
-    Next i
-
-    ' コンボボックスのChangeイベントを設定
-    With comboBox
-        .Name = "ComboBox1" ' コンボボックスの名前を設定
-        .ListFillRange = "" ' リストの範囲をクリア
-        .LinkedCell = "" ' リンクセルをクリア
-    End With
-
-    ' コンボボックスを表示
-    comboBox.Object.ListIndex = 0 ' 初期選択を設定（適切な値に変更してください）
-    comboBox.Activate
+    ' 検索対象となる部分一致を含む文字列（変数w）を設定
+    w = "部分一致のキーワード" ' ここを適切なキーワードに変更
+    
+    ' シート1のB列の最終行を取得
+    lastRow1 = ws1.Cells(ws1.Rows.Count, "B").End(xlUp).Row
+    
+    ' シート1のB列の3行目から最終行までを対象に検索
+    Set r = ws1.Range("B3:B" & lastRow1).Find(What:=w, LookIn:=xlValues, LookAt:=xlPart)
+    
+    If Not r Is Nothing Then
+        ' 部分一致のセルが見つかった場合
+        MsgBox "部分一致セルが見つかりました。行番号: " & r.Row
+    Else
+        ' 部分一致のセルが見つからなかった場合
+        MsgBox "部分一致セルが見つかりませんでした。"
+    End If
 End Sub
 
-Sub GetCellAddress()
-    Dim ws As Worksheet
-    Dim selectedName As String
-    Dim cellAddress As String
-
-    ' ワークシートを設定（適切なワークシート名に変更してください）
-    Set ws = ThisWorkbook.Sheets("Sheet1")
-
-    ' 選択された名前を取得
-    selectedName = comboBox.Object.Value ' コンボボックスのオブジェクトを参照
-
-    If selectedName <> "" Then ' 名前が選択された場合のみ処理を実行
-        ' 名前を検索してセル位置を取得
-        cellAddress = ""
-        Dim lastRow As Long
-        lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
-        For i = 1 To lastRow
-            If ws.Cells(i, 1).Value = selectedName Then
-                cellAddress = ws.Cells(i, 1).Address
-                ' 変数 x にセル位置（行）（Cells.RowもOK）を格納
-                x = i
-                Exit For
-            End If
-        Next i
-
-        ' 結果をメッセージボックスで表示
-        MsgBox "選択した名前: " & selectedName & vbNewLine & "セル位置: " & cellAddress
-
-    ' コピー元の行（変数 ｘに行番号を指定）
-    ws.Rows(x).Copy
-    ' コピー先の行（12行目に貼り付ける場合）
-    ws.Rows(12).PasteSpecial xlPasteAll
-    ' コピー元の行を削除しない
     Application.CutCopyMode = False ' コピー範囲をクリア
 
     End If

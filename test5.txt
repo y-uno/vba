@@ -1,4 +1,4 @@
-Sub CombineCells()
+Sub CombineCellsWithSpace()
     Dim ws As Worksheet
     Dim lastRow As Long
     Dim i As Long
@@ -11,6 +11,6 @@ Sub CombineCells()
     
     ' 各行ごとに処理を実行
     For i = 1 To lastRow
-        ws.Cells(i, 1).Value = ws.Cells(i, 1).Value & " [" & ws.Cells(i, 6).Value & "][" & ws.Cells(i, 7).Value & "]"
+        ws.Cells(i, 1).Value = ws.Cells(i, 1).Value & " [" & ws.Cells(i, 6).Value & "] [" & ws.Cells(i, 7).Value & "]"
     Next i
 End Sub

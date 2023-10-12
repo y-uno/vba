@@ -1,17 +1,16 @@
-Private Sub CommandButton1_Click()
-    Dim selectedName As String
+Sub CombineCells()
+    Dim ws As Worksheet
+    Dim lastRow As Long
+    Dim i As Long
     
-    ' コンボボックスで選択された名前を取得
-    selectedName = ComboBox1.Value
+    ' 対象のワークシートを指定（適切なワークシート名に変更してください）
+    Set ws = ThisWorkbook.Sheets("Sheet1")
     
-    ' 名前が選択されていない場合
-    If selectedName = "" Then
-        ' メッセージを表示
-        MsgBox "名前が選択されていません。"
-    Else
-        ' 名前が選択された場合、名前と"Hello"を表示
-        MsgBox selectedName & " Hello"
-        ' ユーザーフォームを閉じる
-        Unload Me
-    End If
+    ' 最終行を取得
+    lastRow = ws.Cells(ws.Rows.Count, "A").End(xlUp).Row
+    
+    ' 各行ごとに処理を実行
+    For i = 1 To lastRow
+        ws.Cells(i, 1).Value = ws.Cells(i, 1).Value & " [" & ws.Cells(i, 6).Value & "][" & ws.Cells(i, 7).Value & "]"
+    Next i
 End Sub

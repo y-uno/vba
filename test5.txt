@@ -1,47 +1,63 @@
-Sub CombineCellsWithSpace()
-    Dim ws As Worksheet
-    Dim lastRow As Long
-    Dim i As Long
-    
-    ' 対象のワークシートを指定（適切なワークシート名に変更してください）
-    Set ws = ThisWorkbook.Sheets("Sheet1")
-    
-    ' 最終行を取得
-    lastRow = ws.Cells(ws.Rows.Count, "A").End(xlUp).Row
-    
-    ' 各行ごとに処理を実行
-    For i = 1 To lastRow
-        ws.Cells(i, 1).Value = ws.Cells(i, 1).Value & " [" & ws.Cells(i, 6).Value & "] [" & ws.Cells(i, 7).Value & "]"
-    Next i
-End Sub
+REM  *****  BASIC  *****
+Option VBASupport 1
 
-Sub ClearValues()
-    Dim ws As Worksheet
-    Set ws = ThisWorkbook.Sheets("Sheet1") ' シート名を適切なものに変更
+Sub Main
 
-    ' A1:G10 の 70 セルをクリア
-    ws.Range("A1:G10").ClearContents
-End Sub
+MsgBox "Hello"
 
-Sub CopyValuesToSheet2()
+'Sub SearchAndDisplayWithComplexPattern()
     Dim ws1 As Worksheet
     Dim ws2 As Worksheet
-    Dim x As Long ' 行番号
-    Dim i As Long ' ループ変数
+    Dim lastRow1 As Long
+    Dim r As Range
+    Dim w As String
+    Dim numericW() As String
+    Dim i As Integer
+    Dim j As Integer
     
-    ' シート名を適切なものに変更
+    ' シート1とシート2を設定
     Set ws1 = ThisWorkbook.Sheets("Sheet1")
     Set ws2 = ThisWorkbook.Sheets("Sheet2")
     
-    ' x に行番号を設定（適切な行番号を指定）
-    x = 5
+    ' 検索対象となる文字列（変数w）を設定
+    w = "53/155" ' ここを適切な文字列に変更
     
-    ' i に行番号を設定（適切な行番号を指定）
-    i = 1
+    ' 数字のみを抽出
+    numericW = Split(w, "/")
+    For i = 0 To UBound(numericW)
+        numericW(i) = ExtractNumeric(numericW(i))
+    Next i
     
-    ' (x,5) の値を (i,8) にコピー
-    ws2.Cells(i, 8).Value = ws1.Cells(x, 5).Value
+    ' シート1のA列の最終行を取得
+    lastRow1 = ws1.Cells(ws1.Rows.Count, "A").End(xlUp).Row
     
-    ' (x,8) の値を (i,9) にコピー
-    ws2.Cells(i, 9).Value = ws1.Cells(x, 8).Value
+    ' 各数字を個別に部分一致で検索
+    For i = LBound(numericW) To UBound(numericW)
+        ' シート1のB列の4行目から最終行までを対象に検索
+        Set r = ws1.Range(Cells(4, 2), Cells(lastRow1, 2)).Find(What:=numericW(i), LookIn:=xlValues, LookAt:=xlPart)
+        
+        If Not r Is Nothing Then
+            ' 部分一致セルが見つかった場合
+            MsgBox "部分一致セルが見つかりました。行番号: " & r.Row
+        Else
+            ' 部分一致セルが見つからなかった場合
+            MsgBox "部分一致セルが見つかりませんでした。 数字: " & numericW(i)
+        End If
+    Next i
+'End Sub
+
+
+
 End Sub
+
+Function ExtractNumeric(s As String) As String
+  Dim i As Integer
+  Dim result As String
+  result = ""
+  For i = 1 To Len(s)
+      If IsNumeric(Mid(s, i, 1)) Then
+          result = result & Mid(s, i, 1)
+      End If
+  Next i
+  ExtractNumeric = result
+End Function

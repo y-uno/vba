@@ -1,0 +1,80 @@
+Sub FindValuesWithExactMatchInSheet1()
+    Dim ws1 As Worksheet
+    Dim ws2 As Worksheet
+    Dim cell As Range
+    Dim searchTerm As String
+    Dim resultCellC As Range ' C列に結果を格納するセル
+    Dim resultCellE As Range ' E列に結果を格納するセル
+    Dim cellValue As String
+    
+    ' シート1とシート2を指定
+    Set ws1 = ThisWorkbook.Sheets("Sheet1")
+    Set ws2 = ThisWorkbook.Sheets("Sheet2")
+    
+    ' B2セルの値を検索キーワードとして使用
+    searchTerm = ws2.Range("B2").Value
+    
+    ' 結果を格納するセル範囲を初期化
+    Set resultCellC = ws2.Range("C2")
+    Set resultCellE = ws2.Range("E2")
+    
+    ' シート1のB列のセルをB4からB14まで検索
+    For Each cell In ws1.Range("B4:B14")
+        cellValue = cell.Value
+        
+        ' -でセルの値を分割
+        Dim values() As String
+        values = Split(cellValue, "-")
+        
+        If UBound(values) = 2 Then ' -で3つの部分に分かれる場合のみ処理
+            Dim numberPart As String
+            numberPart = ExtractNumbersFromString(values(1)) ' 数字のみを抽出
+            
+            If InStr(searchTerm, "/") > 0 Then
+                ' 検索キーワードが/で区切られている場合
+                Dim keywords() As String
+                keywords = Split(searchTerm, "/")
+                
+                If UBound(keywords) = 1 Then
+                    ' 検索キーワードが2つある場合
+                    If numberPart = ExtractNumbersFromString(keywords(0)) Then
+                        resultCellC.Value = cellValue
+                    End If
+                    If numberPart = ExtractNumbersFromString(keywords(1)) Then
+                        resultCellE.Value = cellValue
+                    End If
+                End If
+            Else
+                ' 検索キーワードが単一の場合
+                If numberPart = ExtractNumbersFromString(searchTerm) Then
+                    resultCellC.Value = cellValue
+                End If
+            End If
+        End If
+    Next cell
+    
+    If resultCellC.Value = "" And resultCellE.Value = "" Then
+        MsgBox "キーワードが含まれるセルが見つかりませんでした。"
+    ElseIf resultCellE.Value = "" Then
+        MsgBox "C2に結果が書き込まれました。"
+    Else
+        MsgBox "C2に結果が書き込まれました。E2に結果が書き込まれました。"
+    End If
+End Sub
+
+' 数字のみを抽出する関数
+Function ExtractNumbersFromString(inputString As String) As String
+    Dim i As Integer
+    Dim char As String
+    Dim result As String
+    result = ""
+    
+    For i = 1 To Len(inputString)
+        char = Mid(inputString, i, 1)
+        If IsNumeric(char) Then
+            result = result & char
+        End If
+    Next i
+    
+    ExtractNumbersFromString = result
+End Function

@@ -1,0 +1,42 @@
+Sub FindValuesWithExactMatchInSheet1()
+    Dim ws1 As Worksheet
+    Dim ws2 As Worksheet
+    Dim cell As Range
+    Dim searchTerm As String
+    Dim resultCell As Range ' 結果を格納するセル
+    Dim cellValue As String
+    
+    ' シート1とシート2を指定
+    Set ws1 = ThisWorkbook.Sheets("Sheet1")
+    Set ws2 = ThisWorkbook.Sheets("Sheet2")
+    
+    ' 検索キーワードを指定
+    searchTerm = "53"
+    
+    ' 結果を格納するセル範囲を初期化
+    Set resultCell = ws2.Cells(ws2.Rows.Count, "C").End(xlUp).Offset(1, 0)
+    
+    ' シート1のB列のセルをB4から最終行まで検索
+    For Each cell In ws1.Range("B4:B" & ws1.Cells(ws1.Rows.Count, "B").End(xlUp).Row)
+        cellValue = cell.Value
+        
+        ' -でセルの値を分割
+        Dim values() As String
+        values = Split(cellValue, "-")
+        
+        If UBound(values) = 2 Then ' -で3つの部分に分かれる場合のみ処理
+            If values(1) = searchTerm Then
+                ' -と-の間にある数字が検索キーワードと完全一致した場合、結果を resultCell に書き込む
+                resultCell.Value = cellValue
+                ' resultCell を次のセルに進める
+                Set resultCell = resultCell.Offset(1, 0)
+            End If
+        End If
+    Next cell
+    
+    If resultCell.Offset(-1, 0).Row = ws2.Range("C1").Row Then
+        MsgBox "キーワードが含まれるセルが見つかりませんでした。"
+    Else
+        MsgBox "結果がシート2のC列に書き込まれました。"
+    End If
+End Sub

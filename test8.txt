@@ -1,5 +1,4 @@
-REM  *****  BASIC  *****
-Option VBASupport 1
+'ボタンを押す前に不足箇所の依頼番号を手動入力させる注意書きを掲示
 Sub main()
 	Call FindValuesWithExactMatchInSheet1()
 	'Call 予定作成

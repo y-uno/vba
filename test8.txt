@@ -1,36 +1,26 @@
 REM  *****  BASIC  *****
 Option VBASupport 1
+
 Sub main()
-	Call FindValuesWithExactMatchInSheet1()
+	Call FindValuesWithExactMatch()
 	
     '■Yesの場合処理を終了する
     If MsgBox("セルをクリアしますか？", vbYesNo) = vbYes Then
-    	
 		'Call 予定作成
 		' B4:K20 の セルをクリア
     	ThisWorkbook.Sheets("スケジュール").Range("B3:L70").ClearContents
-    Else
-    
-    	
 	End If
 
 End Sub
 
-Sub FindValuesWithExactMatchInSheet1()
-    Dim ws1 As Worksheet
-    Dim ws2 As Worksheet
-    Dim searchTermRange As Range ' キーワードセル範囲
-    Dim resultCell1 As Range ' 1列隣に結果を格納するセル
-    Dim resultCell2 As Range ' 1列隣に結果を格納するセル
-    Dim resultCell3 As Range ' 3列隣に結果を格納するセル
-    Dim resultCell4 As Range ' 1列隣に結果を格納するセル
-    Dim cell As Range
+Sub FindValuesWithExactMatch()
+    Dim ws1 As Worksheet, ws2 As Worksheet
+    Dim searchTermRange As Range, cell As Range
+    Dim resultCell1 As Range, resultCell2 As Range, resultCell3 As Range, resultCell4 As Range
     Dim cellValue As String
     Dim i As Long
-    Dim LastRow1 As Long ' B列の最終行（件名の最終行）
-    Dim LastRow2 As Long ' B列の最終行（件名の最終行
-    Dim x As Integer ' 列のオフセット
-    Dim y As Integer ' 列のオフセット
+    Dim LastRow1 As Long, LastRow2 As Long ' 列の最終行
+    Dim x As Integer, y As Integer ' 列のオフセット
     '以下設定項目
 	const 件名の列 = 2 ' ”スケジュール”シート
 	const 件名の開始行 = 3 ' ”スケジュール”シート
@@ -47,7 +37,7 @@ Sub FindValuesWithExactMatchInSheet1()
     Set ws1 = ThisWorkbook.Sheets("エントリー")
     Set ws2 = ThisWorkbook.Sheets("スケジュール")
     
-    ' B列の最終行を取得 (シート2のB列)
+    ' 列の最終行を取得 (シート2のB列)
     LastRow1 = ws1.Cells(Rows.Count, 依頼番号の列).End(xlUp).Row
     LastRow2 = ws2.Cells(Rows.Count, 件名の列).End(xlUp).Row
     
@@ -58,10 +48,10 @@ Sub FindValuesWithExactMatchInSheet1()
     For Each searchTermCell In searchTermRange
         searchTerm = searchTermCell.Value
         ' 結果を格納するセル範囲を初期化
-        Set resultCell1 = searchTermCell.Offset(0, 1) ' 同じ行の1列隣
-        Set resultCell2 = searchTermCell.Offset(0, 2) ' 同じ行の2列隣
-        Set resultCell3 = searchTermCell.Offset(0, 3) ' 同じ行の3列隣
-        Set resultCell4 = searchTermCell.Offset(0, 4) ' 同じ行の4列隣
+        Set resultCell1 = searchTermCell.Offset(0, 1) ' 同じ行の1列隣に結果を格納するセル
+        Set resultCell2 = searchTermCell.Offset(0, 2) ' 同じ行の2列隣に結果を格納するセル
+        Set resultCell3 = searchTermCell.Offset(0, 3) ' 同じ行の3列隣に結果を格納するセル
+        Set resultCell4 = searchTermCell.Offset(0, 4) ' 同じ行の4列隣に結果を格納するセル
     
         ' ws1の依頼番号の列のセルを依頼番号の開始行からLastRow1まで検索←設定箇所
         For Each cell In ws1.Range(ws1.Cells(依頼番号の開始行, 依頼番号の列), ws1.Cells(LastRow1, 依頼番号の列))
@@ -86,19 +76,19 @@ Sub FindValuesWithExactMatchInSheet1()
                     If UBound(keywords) = 1 then
                         ' 検索キーワードが2つある場合
                         If numberPart = ExtractNumbersFromString(keywords(0)) Then
-                            resultCell1.Value = ws1.Cells(cell.Row, 依頼番号の列 + x).Value ' 同じ行のx列隣の値を取得(号車番号）←設定箇所
-                            resultCell2.Value = ws1.Cells(cell.Row, 依頼番号の列 + y).Value ' 同じ行のy列隣の値を取得（依頼者）←設定箇所
+                            resultCell1.Value = ws1.Cells(cell.Row, 依頼番号の列 + x).Value ' 同じ行のx列隣の値を取得(号車番号）
+                            resultCell2.Value = ws1.Cells(cell.Row, 依頼番号の列 + y).Value ' 同じ行のy列隣の値を取得（依頼者）
                         End If
                         If numberPart = ExtractNumbersFromString(keywords(1)) Then
-                            resultCell3.Value = ws1.Cells(cell.Row, 依頼番号の列 + x).Value ' 同じ行のx列隣の値を取得(号車番号）←設定箇所
-                            resultCell4.Value = ws1.Cells(cell.Row, 依頼番号の列 + y).Value ' 同じ行のy列隣の値を取得（依頼者）←設定箇所
+                            resultCell3.Value = ws1.Cells(cell.Row, 依頼番号の列 + x).Value ' 同じ行のx列隣の値を取得(号車番号）
+                            resultCell4.Value = ws1.Cells(cell.Row, 依頼番号の列 + y).Value ' 同じ行のy列隣の値を取得（依頼者)
                         End If
                     End If
                 Else
                     ' 検索キーワードが単一の場合
                     If numberPart = ExtractNumbersFromString(searchTerm) Then
-                        resultCell1.Value = ws1.Cells(cell.Row, 依頼番号の列 + x).Value ' 同じ行のx列隣の値を取得(号車番号）←設定箇所
-                        resultCell2.Value = ws1.Cells(cell.Row, 依頼番号の列 + y).Value ' 同じ行のy列隣の値を取得（依頼者）←設定箇所
+                        resultCell1.Value = ws1.Cells(cell.Row, 依頼番号の列 + x).Value ' 同じ行のx列隣の値を取得(号車番号）
+                        resultCell2.Value = ws1.Cells(cell.Row, 依頼番号の列 + y).Value ' 同じ行のy列隣の値を取得（依頼者）
                     End If
                 End If
             End If
@@ -122,9 +112,7 @@ End Sub
 
 ' 数字のみを抽出する関数
 Function ExtractNumbersFromString(inputString As String) As String
-    Dim i As Integer
-    Dim char As String
-    Dim result As String
+    Dim i As Integer, char As String, result As String
     result = ""
     
     For i = 1 To Len(inputString)
